@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   setup:
@@ -12,19 +15,19 @@ jobs:
       image: node:18.15-alpine
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Install dependencies
         run: npm ci --cache .npm --prefer-offline
 
       - name: Cache .npm
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: .npm
           key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
 
       - name: Upload node_modules
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: node_modules
           path: node_modules
@@ -37,13 +40,16 @@ jobs:
     needs: setup
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download node_modules
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: node_modules
           path: node_modules
+
+      - name: Set file permissions
+        run: chmod -R 755 node_modules
 
       - name: Run lint
         run: npm run lint
@@ -55,13 +61,16 @@ jobs:
     needs: setup
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download node_modules
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: node_modules
           path: node_modules
+
+      - name: Set file permissions
+        run: chmod -R 755 node_modules
 
       - name: Run typecheck
         run: npm run typecheck
@@ -73,19 +82,22 @@ jobs:
     needs: setup
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download node_modules
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: node_modules
           path: node_modules
+
+      - name: Set file permissions
+        run: chmod -R 755 node_modules
 
       - name: Run build
         run: npm run build
 
       - name: Upload build artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: output
           path: .output
@@ -97,19 +109,22 @@ jobs:
     needs: setup
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download node_modules
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: node_modules
           path: node_modules
+
+      - name: Set file permissions
+        run: chmod -R 755 node_modules
 
       - name: Run unit tests
         run: npm run test:unit:coverage
 
       - name: Upload coverage artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: coverage
           path: coverage
@@ -122,19 +137,22 @@ jobs:
       image: mcr.microsoft.com/playwright:v1.32.1-focal
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Download node_modules
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v3
         with:
           name: node_modules
           path: node_modules
+      
+      - name: Set file permissions
+        run: chmod -R 755 node_modules
 
       - name: Run e2e tests
         run: npm run test:e2e:ci
 
       - name: Upload e2e test report artifacts
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: e2e-report
           path: e2e/report
