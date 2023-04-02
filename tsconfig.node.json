@@ -9,7 +9,8 @@
   },
   "include": [
     "src/**/*", 
-    "package.json",
+    "package.json", 
+    "vite.config.*", 
     "vitest.config.*", 
     "playwright.config.*"
   ],

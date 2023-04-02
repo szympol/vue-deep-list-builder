@@ -14,7 +14,7 @@ module.exports = {
   plugins: ['testing-library', 'jest-dom'],
   overrides: [
     {
-      files: ['e2e-tests/**.spec.{js,ts,jsx,tsx}'],
+      files: ['e2e/**.spec.{js,ts,jsx,tsx}'],
       extends: ['plugin:playwright/playwright-test'],
     },
   ],

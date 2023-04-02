@@ -7,7 +7,7 @@ import { configDefaults, defineConfig } from 'vitest/config';
 
 import viteConfig from './vite.config';
 
-const vitestConfig = {
+const vitestConfig: InlineConfig = {
   define: {
     'import.meta.vitest': 'undefined',
   },
@@ -15,6 +15,7 @@ const vitestConfig = {
     reporters: ['default', 'junit'],
     outputFile: './junit.xml',
     coverage: {
+      provider: 'c8',
       reporter: ['text', 'json-summary', 'html', 'cobertura', 'text-summary'],
       exclude: ['src/**/__tests__/**'],
     },
@@ -23,11 +24,11 @@ const vitestConfig = {
       'src/**/*.{js,jsx,ts,tsx,vue}',
       'utils/**/*.{js,jsx,ts,tsx,vue}',
     ],
-    exclude: [...configDefaults.exclude, 'visual.test.ts', 'e2e-tests'],
+    exclude: [...configDefaults.exclude, 'visual.test.ts', 'e2e'],
     environment: 'jsdom',
     root: fileURLToPath(new URL('./', import.meta.url)),
   },
-} as InlineConfig;
+};
 
 export default mergeConfig(
   viteConfig,

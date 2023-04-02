@@ -14,6 +14,9 @@ dist-ssg
 lib
 *.local
 *.xml
+e2e/report
+test-results
+/playwright/.cache/
 
 # Editor directories and files
 .vscode/*
