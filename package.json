@@ -3,10 +3,74 @@
   "private": false,
   "version": "0.0.0",
   "type": "module",
+  "description": "VueDeepListBuilder is a versatile library for parsing and rendering nested JavaScript data structures as HTML unordered lists (ul/li) in Vue applications, ideal for displaying admin log data from ElasticSearch.",
+  "main": "./lib/vue-deep-list-builder.umd.js",
+  "module": "./lib/vue-deep-list-builder.esm.js",
+  "unpkg": "./lib/vue-deep-list-builder.min.js",
+  "exports": {
+    ".": {
+      "import": "./lib/vue-deep-list-builder.esm.js",
+      "require": "./lib/vue-deep-list-builder.umd.js"
+    },
+    "./lib/style.css": "./lib/style.css"
+  },
+  "types": "./lib/types/src/lib.d.ts",
+  "author": {
+    "name": "Szymon Polanowski",
+    "email": "szympol@hotmail.com"
+  },
+  "files": [
+    "lib"
+  ],
+  "keywords": [
+    "vue",
+    "deep",
+    "list",
+    "builder",
+    "nested",
+    "data",
+    "explorer",
+    "ul",
+    "li",
+    "typescript",
+    "parsing",
+    "display",
+    "frontend",
+    "elasticsearch",
+    "admin",
+    "log",
+    "visualization"
+  ],
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/szympol/vue-deep-list-builder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/szympol/vue-deep-list-builder/issues"
+  },
+  "homepage": "https://github.com/szympol/vue-deep-list-builder#readme",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --open",
     "build": "vue-tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "build:ssg": "vite-ssg build --config vite.ssg-config.ts",
+    "build:lib": "vue-tsc --noEmit && vite build --config vite.lib-config.ts",
+    "test:coverage": "vitest run --coverage --environment jsdom",
+    "test:unit": "vitest --environment jsdom",
+    "test:unit:ui": "vitest --environment jsdom --ui",
+    "test:e2e": "npx playwright test e2e-tests --headed",
+    "test:e2e:ci": "npx playwright test e2e-tests",
+    "test:e2e:generator": "npx playwright codegen http://localhost:4173/",
+    "test:e2e:report": "npx playwright show-report e2e-tests/report",
+    "test:visual": "npx playwright test visual.test.ts -c playwright-visual.config.ts --output artifacts-results",
+    "test:visual-report": "npx playwright show-report visual.test.ts-snapshots/report",
+    "test:visual-update": "npx playwright test visual.test.ts --update-snapshots -c playwright-visual.config.ts",
+    "typecheck": "vue-tsc --noEmit -p tsconfig.vitest.json --composite false",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --ignore-path .gitignore",
+    "lint:fix": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "update:browserslist": "npx browserslist@latest --update-db",
+    "prepare": "husky install"
   },
   "dependencies": {
     "vue": "3.2.47"
@@ -51,6 +115,9 @@
     "vite": "4.2.1",
     "vue-tsc": "1.2.0"
   },
+  "peerDependencies": {
+    "vue": "3.2.47"
+  }, 
   "lint-staged": {
     "*.{vue,js,jsx,cjs,mjs,ts,tsx,cts,mts}": "npm run lint",
     "*.{js,css,md}": "prettier --write"
