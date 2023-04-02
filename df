@@ -1,0 +1,57 @@
+#!/bin/bash
+
+set -ex
+
+cd "$(dirname "$0")"
+
+DC="$(which docker) compose -f ./docker-compose.yml"
+
+HOST_UID="$(id -u)"
+HOST_GID="$(id -g)"
+
+SERVICE="vue-deep-list-builder"
+
+export HOST_UID
+export HOST_GID
+export DOCKER_BUILDKIT=1
+
+RUN="${DC} run --rm ${SERVICE}"
+
+set -x
+
+case $1 in
+
+"start")
+  ${RUN} npm ci
+  ${DC} up -d
+  if [ "$2" == '-f' ]; then
+    ${DC} logs -f
+  fi
+  ;;
+
+"restart")
+  ${DC} down || true
+  exec "$0" start "${@:2}"
+  ;;
+
+"npm")
+  ${RUN} npm "${@:2}"
+  ;;
+
+"npx")
+  ${RUN} npx "${@:2}"
+  ;;
+
+"run")
+  ${RUN} "${@:2}"
+  ;;
+
+"shell")
+  ${DC} run -u 0:0 --rm ${SERVICE} /bin/bash
+  ;;
+
+*)
+  ${DC} "${@:1}"
+  ;;
+
+esac
