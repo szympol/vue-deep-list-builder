@@ -6,7 +6,7 @@ import dts from 'vite-plugin-dts';
 
 import { name as packageName } from './package.json';
 import { kebabCaseToPascalCase } from './src/utils/string-converters';
-import commonConfig from './vite.common-config';
+import viteConfig from './vite.config';
 
 const libConfig: UserConfigExport = {
   build: {
@@ -47,5 +47,5 @@ const libConfig: UserConfigExport = {
 };
 
 export default defineConfig({
-  ...mergeConfig(commonConfig, libConfig),
+  ...mergeConfig(viteConfig, libConfig),
 });

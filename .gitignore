@@ -13,6 +13,7 @@ dist-ssr
 dist-ssg
 lib
 *.local
+*.xml
 
 # Editor directories and files
 .vscode/*

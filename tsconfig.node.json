@@ -7,5 +7,10 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["vite.config.ts", "vite.common-config.*", "vite.lib-config.*", "src/**/*", "package.json"],
+  "include": [
+    "src/**/*", 
+    "package.json",
+    "vitest.config.*", 
+    "playwright.config.*"
+  ],
 }

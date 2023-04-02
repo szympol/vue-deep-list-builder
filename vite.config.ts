@@ -1,38 +1,88 @@
-import { defineConfig } from 'vite';
-import type { InlineConfig } from 'vitest';
+import { fileURLToPath, URL } from 'node:url';
 
-import commonConfig from './vite.common-config';
+import vue from '@vitejs/plugin-vue';
+import vueJsx from '@vitejs/plugin-vue-jsx';
+import type {
+  RootNode,
+  TemplateChildNode,
+} from '@vue/compiler-core/dist/compiler-core';
+import { defineConfig, type UserConfigExport } from 'vite';
+import banner from 'vite-plugin-banner';
+import { checker } from 'vite-plugin-checker';
+import commonjs from 'vite-plugin-commonjs';
+import vitePluginImp from 'vite-plugin-imp';
 
-const vitestConfig = {
-  define: {
-    'import.meta.vitest': 'undefined',
-  },
-  test: {
-    reporters: ['default', 'junit'],
-    outputFile: './junit.xml',
-    coverage: {
-      reporter: ['text', 'json-summary', 'html', 'cobertura', 'text-summary'],
-      exclude: ['src/mockServer/**', 'src/**/__tests__/**'],
+import pkg from './package.json';
+
+/* eslint-disable max-len */
+const nameAscii = `
+██╗   ██╗██╗   ██╗███████╗██████╗ ███████╗███████╗██████╗ ██╗     ██╗███████╗████████╗██████╗ ██╗   ██╗██╗██╗     ██████╗ ███████╗██████╗ 
+██║   ██║██║   ██║██╔════╝██╔══██╗██╔════╝██╔════╝██╔══██╗██║     ██║██╔════╝╚══██╔══╝██╔══██╗██║   ██║██║██║     ██╔══██╗██╔════╝██╔══██╗
+██║   ██║██║   ██║█████╗  ██║  ██║█████╗  █████╗  ██████╔╝██║     ██║███████╗   ██║   ██████╔╝██║   ██║██║██║     ██║  ██║█████╗  ██████╔╝
+╚██╗ ██╔╝██║   ██║██╔══╝  ██║  ██║██╔══╝  ██╔══╝  ██╔═══╝ ██║     ██║╚════██║   ██║   ██╔══██╗██║   ██║██║██║     ██║  ██║██╔══╝  ██╔══██╗
+ ╚████╔╝ ╚██████╔╝███████╗██████╔╝███████╗███████╗██║     ███████╗██║███████║   ██║   ██████╔╝╚██████╔╝██║███████╗██████╔╝███████╗██║  ██║
+  ╚═══╝   ╚═════╝ ╚══════╝╚═════╝ ╚══════╝╚══════╝╚═╝     ╚══════╝╚═╝╚══════╝   ╚═╝   ╚═════╝  ╚═════╝ ╚═╝╚══════╝╚═════╝ ╚══════╝╚═╝  ╚═╝
+`;
+/* eslint-enable max-len */
+
+const bannerContent = `/**\n * name: ${pkg.name}\n * version: v${pkg.version}
+ * description: ${pkg.description}\n * author: ${pkg.author.name}\n * homepage: ${pkg.homepage}\n ${nameAscii}\n */`;
+
+const removeAttributeFromNode =
+  (attributeName: string) => (node: RootNode | TemplateChildNode) => {
+    if (process.env.NODE_ENV !== 'production') return;
+
+    if (node.type === 1 /*NodeTypes.ELEMENT*/) {
+      for (let i = 0; i < node.props.length; i++) {
+        const p = node.props[i];
+
+        if (
+          p &&
+          p.type === 6 /*NodeTypes.ATTRIBUTE*/ &&
+          p.name === attributeName
+        ) {
+          node.props.splice(i, 1);
+          i--;
+        }
+      }
+    }
+  };
+
+export const viteConfig: UserConfigExport = {
+  plugins: [
+    vue({
+      template: {
+        compilerOptions: {
+          nodeTransforms: [removeAttributeFromNode('data-testid')],
+        },
+      },
+    }),
+    vueJsx(),
+    vitePluginImp(),
+    banner(bannerContent),
+    checker({
+      vueTsc: true,
+      eslint: {
+        lintCommand: 'eslint "./src/**/*.{vue,js,jsx,cjs,mjs,ts,tsx,cts,mts}"',
+      },
+    }),
+    commonjs(),
+  ],
+  build: {
+    commonjsOptions: {
+      include: [/.js$/],
     },
-    globals: true,
-    includeSource: [
-      'src/**/*.{js,jsx,ts,tsx,vue}',
-      'utils/**/*.{js,jsx,ts,tsx,vue}',
-    ],
-    exclude: [
-      'visual.test.ts',
-      'node_modules',
-      'dist',
-      '.idea',
-      '.git',
-      '.cache',
-      'e2e-tests',
-    ],
-    environment: 'jsdom',
-  } as InlineConfig,
+  },
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
+    },
+  },
+  server: {
+    host: '0.0.0.0',
+  },
 };
 
 export default defineConfig({
-  ...commonConfig,
-  ...vitestConfig,
+  ...viteConfig,
 });

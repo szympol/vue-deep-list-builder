@@ -1,6 +1,6 @@
 import { defineConfig, mergeConfig } from 'vite';
 
-import commonConfig from './vite.common-config';
+import viteConfig from './vite.config';
 
 const consoleErrorDefault = console.error;
 const consoleErrorTemp = console.error;
@@ -44,5 +44,5 @@ const libConfig = {
 };
 
 export default defineConfig({
-  ...mergeConfig(commonConfig, libConfig),
+  ...mergeConfig(viteConfig, libConfig),
 });
