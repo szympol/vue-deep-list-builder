@@ -7,6 +7,7 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+coverage
 node_modules
 dist
 dist-ssr
@@ -15,8 +16,10 @@ lib
 *.local
 *.xml
 e2e/report
+e2e/report-visual
 test-results
 /playwright/.cache/
+artifacts-results
 
 # Editor directories and files
 .vscode/*

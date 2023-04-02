@@ -1,10 +1,8 @@
-import type { PlaywrightTestConfig } from '@playwright/test';
-import { devices } from '@playwright/test';
-import * as dotenv from 'dotenv';
+import { devices, PlaywrightTestConfig } from '@playwright/test';
+import dotenv from 'dotenv';
 
-dotenv.config();
-
-export const projects = [
+// import { projects } from './playwright.config';
+const projects = [
   {
     name: 'chrome',
     use: { ...devices['Desktop Chrome'] },
@@ -35,34 +33,29 @@ export const projects = [
   },
 ];
 
+dotenv.config();
+
 const config: PlaywrightTestConfig = {
-  testDir: './e2e',
-  timeout: 30 * 1000,
-  expect: {
-    timeout: 5000,
-  },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 1,
   workers: process.env.CI ? 1 : 10,
   reporter: [
     [process.env.CI ? 'dot' : 'list'],
-    ['html', { open: 'never', outputFolder: 'e2e/report' }],
-    ['junit', { outputFile: 'e2e/report/e2e.junit.xml' }],
+    ['html', { open: 'never', outputFolder: 'e2e/report-visual' }],
+    ['junit', { outputFile: 'visual.junit.xml' }],
   ],
-  use: {
-    actionTimeout: 0,
-    baseURL: 'http://localhost:5173',
-    trace: 'on-first-retry',
-  },
-  projects,
   webServer: {
-    command: process.env.CI ? 'vite preview --port 5173' : 'vite dev',
-    port: 5173,
+    command: 'npm run build && npm run preview',
+    port: 4173,
     timeout: 120 * 1000,
     reuseExistingServer: !process.env.CI,
+  },
+  use: {
+    baseURL: 'http://localhost:4173',
     ignoreHTTPSErrors: true,
   },
+  projects,
 };
 
 export default config;
